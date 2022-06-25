@@ -5,3 +5,4 @@
 ## PPT on our project is not uploaded since the company wants this information is classified as confidential.
 
 ## PS. I'm actively searching for a job :)
+![image](https://user-images.githubusercontent.com/56338789/175765019-181749d4-7f02-48e6-acc6-b5017ac54591.png)
