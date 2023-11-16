@@ -1,0 +1,53 @@
+
+
+def show_aoai_cost(series):
+    """returns aoai cost by supporting models"""
+    
+    # 단일 모델 cost 계산
+    def cal_aoai_cost(series, model):
+        import tiktoken
+        encoding = tiktoken.get_encoding("cl100k_base") 
+
+        def cal_text_cost(string: str, model: str) -> float:
+            """Returns the cost of Azure Openai API"""
+
+            # if model not in models:
+            #           return f'please input proper model name from: {models}'
+
+            model_price = {'gpt-4-32k':0.12, 'gpt-35-turbo':0.0015, 'gpt-35-turbo-16k':0.003,'gpt-4':0.03}    
+
+                # # pricing 2023.11.15
+                #                   prompt  completion
+                # GPT-3.5-Turbo	4K	$0.0015	$0.002
+                # GPT-3.5-Turbo	16K	$0.003	$0.004
+                # GPT-4	8K	$0.03	$0.06
+                # GPT-4	32K	$0.06	$0.12
+
+            encoding_name = "cl100k_base"
+            encoding = tiktoken.get_encoding(encoding_name)
+            num_tokens = len(encoding.encode(string))
+            cost = num_tokens * model_price[model]
+            return cost
+
+        estimated_cost = series.apply(lambda string: cal_text_cost(string,model))    
+        estimated_cost_sum = estimated_cost.sum()
+
+        result = f"{model} estimated cost: ${round(estimated_cost_sum,2)} ~ ${round(estimated_cost_sum*3,2)} or above"
+        """ result가 range인 이유:
+        openai api 는 1.prompt(우리가 보내는 명령 text), 2.completion(AOAI가 작성해주는 글)로 구성됨.
+        본 로직은 prompt계산값 ~ prompt 계산값*3값
+
+        3이라고 파라미터가 되어있지만, completion으로 많은량을 요청할 시, 더 많이 나올 수 있음. 
+        """
+        print(result)
+        
+    models = ['gpt-4-32k','gpt-4','gpt-35-turbo-16k','gpt-35-turbo'] # AOAI에서 명명하는 표기와 동일합니다.
+    for model in models:
+        cal_aoai_cost(series, model)
+    
+    return "calculation done."
+    
+import pandas as pd
+df = pd.DataFrame({'msg':['love AOAI', 'love AOA','love the way you lie']})
+
+show_aoai_cost(df['msg'])
